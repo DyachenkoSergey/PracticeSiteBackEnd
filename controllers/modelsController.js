@@ -17,16 +17,32 @@ class modelsController {
       });
 
       res.json(modelInfo);
-    } catch (e) {
-      res.status(400).json("something went wrong");
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
     }
   }
+
+  async model(req, res) {
+    try {
+      const { modelId } = req.body;
+      const model = await User.findOne({ userId: modelId });
+      const obj = {
+        userName: model.userName,
+        userId: model.userId,
+        modelTokens: { type: Number, default: 0 },
+      };
+      res.json(obj);
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
   async topModels(req, res) {
     try {
       const models = await User.find({ userRole: "MODEL" });
       res.json(models);
-    } catch (e) {
-      res.status(400).json("something went wrong");
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
     }
   }
 }

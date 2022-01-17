@@ -9,7 +9,7 @@ module.exports = function (roles) {
     try {
       const token = req.headers.authorization.split(" ")[1];
       if (!token) {
-        return res.status(403).json({ message: "user is not logged in" });
+        return res.status(401).json({ message: "user is not logged in" });
       }
       const { roles: userRoles } = jwt.verify(token, secret);
       let hasRole = false;
@@ -19,12 +19,11 @@ module.exports = function (roles) {
         }
       });
       if (!hasRole) {
-        return res.status(403).json({ message: "you don't have access" });
+        return res.status(401).json({ message: "you don't have access" });
       }
       next();
-    } catch (e) {
-      console.log(e);
-      return res.status(403).json({ message: "user is not logged in" });
+    } catch (error) {
+      return res.status(401).json({ message: "user is not logged in" });
     }
   };
 };

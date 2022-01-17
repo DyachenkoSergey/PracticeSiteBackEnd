@@ -8,6 +8,8 @@ const User = new Schema({
   userTokens: { type: Number, default: 0 },
   userRole: { type: String, required: true },
   userModels: [{ type: String, default: null }],
+  isOnLine: { type: Boolean, default: false },
+  isStream: { type: Boolean, default: false },
 });
 
 module.exports = model("User", User);

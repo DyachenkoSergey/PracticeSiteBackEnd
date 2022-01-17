@@ -14,14 +14,15 @@ router.post(
     check("userPassword", "password cannot be empty").notEmpty(),
     check(
       "password",
-      "Password should be at least 4 symbols, contain at least 1 lowercase letter, 1 uppercase letter, 1 number and 1 special character"
+      "Password should be at least 4 symbols, contain at least 1 lowercase letter, 1 uppercase letter"
     ).matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{4,}$/),
     check("userEmail", "Email cannot be empty").notEmpty(),
     check("userEmail", "Enter a valid email").isEmail(),
   ],
   controller.registration
 );
-router.post("/login", controller.login);
+router.post("/logIn", controller.logIn);
+router.post("/logOut", controller.logOut);
 router.get("/users", controller.getUser);
 
 module.exports = router;

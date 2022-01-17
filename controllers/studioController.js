@@ -5,8 +5,8 @@ class studioController {
     try {
       const studio = await User.find({ userRole: "STUDIO" });
       res.json(studio);
-    } catch (e) {
-      res.status(400).json("something went wrong");
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
     }
   }
 }

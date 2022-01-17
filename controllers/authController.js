@@ -25,16 +25,20 @@ class authController {
       } = req.body.values;
       const errors = validationResult(req);
       if (!errors.isEmpty) {
-        return res.status(400).json({ message: "registration error" });
+        return res.status(401).json({ message: "registration error" });
       }
       const foundUser = await User.findOne({ userName });
       if (foundUser) {
-        return res.status(400).json({ message: "Name already in use" });
+        return res.status(401).json({ message: "Name already in use" });
+      }
+      const registeredEmail = await User.findOne({ userEmail });
+      if (registeredEmail) {
+        return res.status(401).json({ message: "Email already in use" });
       }
       const hashPassword = bcrypt.hashSync(userPassword, 7);
       const possibleRoles = ["USER", "MODEL", "STUDIO"];
       if (!possibleRoles.includes(userRole)) {
-        return res.status(400).json({ message: "registration error" });
+        return res.status(401).json({ message: "registration error" });
       }
 
       const userId = uuidv4();
@@ -56,17 +60,18 @@ class authController {
       await user.save();
 
       return res.json({ message: "user registered successfully" });
-    } catch (e) {
-      console.log(e);
-      res.status(400).json("registration error");
+    } catch (error) {
+      res.status(401).json({ message: "registration error" });
     }
   }
-  async login(req, res) {
+  async logIn(req, res) {
     try {
       const { name: userName, password: userPassword } = req.body.values;
       const foundUser = await User.findOne({ userName });
       if (!foundUser) {
-        return res.status(400).json(`Sorry, ${userName} not found`);
+        return res
+          .status(401)
+          .json({ message: `Sorry, ${userName} not found` });
       }
       if (foundUser) {
         const validPassword = bcrypt.compareSync(
@@ -74,9 +79,13 @@ class authController {
           foundUser.userPassword
         );
         if (!validPassword) {
-          return res.status(400).json(`incorrect password`);
+          return res.status(401).json({ message: `incorrect password` });
         }
         const token = generateAccessToken(foundUser.userName, foundUser.userId);
+
+        foundUser.isOnLine = true;
+        await foundUser.save();
+
         return res.json({
           userId: foundUser.userId,
           userName: foundUser.userName,
@@ -86,16 +95,29 @@ class authController {
           token,
         });
       }
-    } catch (e) {
-      res.status(400).json("login error");
+    } catch (error) {
+      res.status(401).json({ message: "login error" });
     }
   }
+
+  async logOut(req, res) {
+    try {
+      const { userId } = req.body;
+      const user = await User.findOne({ userId });
+      user.isOnLine = false;
+      await user.save();
+      res.status(200).json({ message: "user logged out" });
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
   async getUser(req, res) {
     try {
       const users = await User.find();
       res.json(users);
-    } catch (e) {
-      res.status(400).json("something went wrong");
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
     }
   }
 }

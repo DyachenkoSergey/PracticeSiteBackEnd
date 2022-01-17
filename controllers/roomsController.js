@@ -7,7 +7,7 @@ class roomsController {
       const room = await Room.findOne({ roomId });
       res.json(room);
     } catch (error) {
-      res.status(400).json("something went wrong");
+      res.status(401).json({message: "something went wrong"});
     }
   }
 }
