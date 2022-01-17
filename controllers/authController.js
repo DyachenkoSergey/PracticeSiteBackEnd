@@ -22,6 +22,7 @@ class authController {
         password: userPassword,
         email: userEmail,
         role: userRole,
+        studioId: modelStudioId,
       } = req.body.values;
       const errors = validationResult(req);
       if (!errors.isEmpty) {
@@ -50,6 +51,13 @@ class authController {
         userPassword: hashPassword,
         userRole,
       });
+
+      if (modelStudioId) {
+        const studio = await User.findOne({ modelStudioId });
+        const obj = { userName, userId };
+        studio.get("studioModels").push(obj);
+        await studio.save();
+      }
 
       if (userRole === "MODEL") {
         const room = new Room({

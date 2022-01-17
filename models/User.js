@@ -7,7 +7,7 @@ const User = new Schema({
   userEmail: { type: String, unique: true, required: true },
   userTokens: { type: Number, default: 0 },
   userRole: { type: String, required: true },
-  userModels: [{ type: String, default: null }],
+  studioModels: [{ type: Object, default: null }],
   isOnLine: { type: Boolean, default: false },
   isStream: { type: Boolean, default: false },
 });
