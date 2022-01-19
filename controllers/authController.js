@@ -22,8 +22,9 @@ class authController {
         password: userPassword,
         email: userEmail,
         role: userRole,
-        studioId: modelStudioId,
+        studioId,
       } = req.body.values;
+
       const errors = validationResult(req);
       if (!errors.isEmpty) {
         return res.status(401).json({ message: "registration error" });
@@ -49,15 +50,9 @@ class authController {
         userName,
         userEmail,
         userPassword: hashPassword,
+        studioId,
         userRole,
       });
-
-      if (modelStudioId) {
-        const studio = await User.findOne({ modelStudioId });
-        const obj = { userName, userId };
-        studio.get("studioModels").push(obj);
-        await studio.save();
-      }
 
       if (userRole === "MODEL") {
         const room = new Room({
@@ -90,7 +85,6 @@ class authController {
           return res.status(401).json({ message: `incorrect password` });
         }
         const token = generateAccessToken(foundUser.userName, foundUser.userId);
-
         foundUser.isOnLine = true;
         await foundUser.save();
 

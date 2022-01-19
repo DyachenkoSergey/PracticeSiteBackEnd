@@ -13,12 +13,10 @@ const PORT = process.env.PORT || 9999;
 const mongoose = require("mongoose");
 const authRouter = require("./routes/authRouter");
 const modelsRouter = require("./routes/modelsRouter");
-const studioRouter = require("./routes/studioRouter");
 const roomsRouter = require("./routes/roomsRouter");
 app.use("/rooms", roomsRouter);
 app.use("/auth", authRouter);
 app.use("/models", modelsRouter);
-app.use("/studio", studioRouter);
 
 const start = async () => {
   try {
@@ -92,9 +90,8 @@ io.on("connection", (socket) => {
   });
 });
 
-
-    // const connectMessage = {
-    //   userName: "system message",
-    //   text: `${userName} joined the chat`,
-    // };
-    // dataRoom.get("messages").push(connectMessage);
+// const connectMessage = {
+//   userName: "system message",
+//   text: `${userName} joined the chat`,
+// };
+// dataRoom.get("messages").push(connectMessage);

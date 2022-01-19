@@ -37,6 +37,26 @@ class modelsController {
     }
   }
 
+  async studioModels(req, res) {
+    try {
+      const { studioId } = req.body;
+      const models = await User.find({ studioId: studioId });
+      const modelsInfo = models.map((model) => {
+        const obj = {
+          userId: model.userId,
+          userName: model.userName,
+          userEmail: model.userEmail,
+          userTokens: model.userTokens,
+          isOnLine: model.isOnLine,
+        };
+        return obj;
+      });
+      res.json(modelsInfo);
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
   async topModels(req, res) {
     try {
       const models = await User.find({ userRole: "MODEL" });
