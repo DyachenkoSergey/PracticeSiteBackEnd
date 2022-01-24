@@ -29,9 +29,35 @@ class modelsController {
       const obj = {
         userName: model.userName,
         userId: model.userId,
+        userProfile: model.userProfile,
         modelTokens: { type: Number, default: 0 },
       };
       res.json(obj);
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
+  async modelProfile(req, res) {
+    try {
+      const { modelId } = req.body;
+      const model = await User.findOne({ userId: modelId });
+      const modelProfile = model.get("userProfile");
+      res.json(modelProfile);
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
+  async editModelProfile(req, res) {
+    try {
+      const userId = req.body.modelId;
+      const profile = req.body.values;
+      const model = await User.findOne({ userId });
+      model.get("userProfile").splice(0, model.get("userProfile").length);
+      model.get("userProfile").push(profile);
+      await model.save();
+      res.json({ message: "profile changed successfully" });
     } catch (error) {
       res.status(401).json({ message: "something went wrong" });
     }

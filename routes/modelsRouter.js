@@ -8,6 +8,10 @@ router.post("/model", controller.model);
 
 router.post("/studioModels", controller.studioModels);
 
+router.post("/editModelProfile", controller.editModelProfile);
+
+router.post("/modelProfile", controller.modelProfile);
+
 router.get("/topModels", controller.topModels);
 
 module.exports = router;
