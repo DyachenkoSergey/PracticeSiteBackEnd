@@ -22,6 +22,23 @@ class modelsController {
     }
   }
 
+  async getAllModels(req, res) {
+    try {
+      const models = await User.find({ userRole: "MODEL" });
+      const modelInfo = models.map((model) => {
+        const modelObj = {
+          userName: model.userName,
+          userEmail: model.userEmail,
+          userId: model.userId,
+        };
+        return modelObj;
+      });
+      res.json(modelInfo);
+    } catch (error) {
+      res.status(401).json({ message: "something went wrong" });
+    }
+  }
+
   async model(req, res) {
     try {
       const { modelId } = req.body;

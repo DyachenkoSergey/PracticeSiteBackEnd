@@ -4,6 +4,8 @@ const controller = require("../controllers/modelsController");
 
 router.post("/modelsList", controller.modelsList);
 
+router.get("/modelsList", controller.getAllModels);
+
 router.post("/model", controller.model);
 
 router.post("/studioModels", controller.studioModels);
