@@ -23,10 +23,11 @@ class modelsController {
   }
 
   async getFilteredModels(req, res) {
-    console.log(req.query);
     try {
       const models = await User.find({ userRole: "MODEL" });
-      let filterModel = [];
+
+      const filterModelArray = [];
+
       const ages = {
         Teenagers: [17, 23],
         Young: [22, 31],
@@ -35,26 +36,48 @@ class modelsController {
         Granny: [50, 80],
       };
       if (req.query.age) {
-        filterModel = models.filter(
+        const filteredByAge = models.filter(
           (model) =>
             model.userProfile?.age > ages[req.query.age][0] &&
             model.userProfile?.age < ages[req.query.age][1]
         );
+        filteredByAge.forEach((item) => {
+          filterModelArray.push(item);
+        });
       }
       if (req.query.bodyType) {
-        filterModel = models.filter(
+        const filteredByBodyType = models.filter(
           (model) => model.userProfile?.bodyType === req.query.bodyType
         );
+        filteredByBodyType.forEach((item) => {
+          filterModelArray.push(item);
+        });
       }
       if (req.query.hair) {
-        filterModel = models.filter(
+        const filteredByHair = models.filter(
           (model) => model.userProfile?.hair === req.query.hair
         );
+        filteredByHair.forEach((item) => {
+          filterModelArray.push(item);
+        });
       }
       if (req.query.ethnicity) {
-        filterModel = models.filter(
+        const filteredByEthnicity = models.filter(
           (model) => model.userProfile?.ethnicity === req.query.ethnicity
         );
+        filteredByEthnicity.forEach((item) => {
+          filterModelArray.push(item);
+        });
+      }
+      if (
+        !req.query.age &&
+        !req.query.bodyType &&
+        !req.query.hair &&
+        !req.query.ethnicity
+      ) {
+        models.forEach((item) => {
+          filterModelArray.push(item);
+        });
       }
 
       if (
@@ -62,20 +85,24 @@ class modelsController {
           req.query.bodyType ||
           req.query.hair ||
           req.query.ethnicity) &&
-        filterModel.length === 0
+        filterModelArray.length === 0
       ) {
         return res.json([]);
       }
 
-      let searchModels = [];
-      if (filterModel.length) {
-        searchModels = filterModel.filter((model) =>
-          model.userName.includes(req.query.searchQueryParam)
-        );
-      } else
-        searchModels = models.filter((model) =>
-          model.userName.includes(req.query.searchQueryParam)
-        );
+      const searchModels = filterModelArray.filter((model) =>
+        model.userName.includes(req.query.searchQueryParam)
+      );
+      console.log(searchModels);
+
+      // if (filterModelArray.length) {
+      //   searchModels = filterModelArray.filter((model) =>
+      //     model.userName.includes(req.query.searchQueryParam)
+      //   );
+      // } else
+      //   searchModels = models.filter((model) =>
+      //     model.userName.includes(req.query.searchQueryParam)
+      //   );
       const modelInfo = searchModels.map((model) => {
         const modelObj = {
           userName: model.userName,
@@ -86,6 +113,68 @@ class modelsController {
       });
       res.json(modelInfo);
     } catch (error) {
+      // try {
+      //   const models = await User.find({ userRole: "MODEL" });
+      //   let filterModel = [];
+      //   const ages = {
+      //     Teenagers: [17, 23],
+      //     Young: [22, 31],
+      //     Mom: [30, 41],
+      //     Mature: [40, 51],
+      //     Granny: [50, 80],
+      //   };
+      //   if (req.query.age) {
+      //     filterModel = models.filter(
+      //       (model) =>
+      //         model.userProfile?.age > ages[req.query.age][0] &&
+      //         model.userProfile?.age < ages[req.query.age][1]
+      //     );
+      //   }
+      //   if (req.query.bodyType) {
+      //     filterModel = models.filter(
+      //       (model) => model.userProfile?.bodyType === req.query.bodyType
+      //     );
+      //   }
+      //   if (req.query.hair) {
+      //     filterModel = models.filter(
+      //       (model) => model.userProfile?.hair === req.query.hair
+      //     );
+      //   }
+      //   if (req.query.ethnicity) {
+      //     filterModel = models.filter(
+      //       (model) => model.userProfile?.ethnicity === req.query.ethnicity
+      //     );
+      //   }
+
+      //   if (
+      //     (req.query.age ||
+      //       req.query.bodyType ||
+      //       req.query.hair ||
+      //       req.query.ethnicity) &&
+      //     filterModel.length === 0
+      //   ) {
+      //     return res.json([]);
+      //   }
+
+      //   let searchModels = [];
+      //   if (filterModel.length) {
+      //     searchModels = filterModel.filter((model) =>
+      //       model.userName.includes(req.query.searchQueryParam)
+      //     );
+      //   } else
+      //     searchModels = models.filter((model) =>
+      //       model.userName.includes(req.query.searchQueryParam)
+      //     );
+      //   const modelInfo = searchModels.map((model) => {
+      //     const modelObj = {
+      //       userName: model.userName,
+      //       userEmail: model.userEmail,
+      //       userId: model.userId,
+      //     };
+      //     return modelObj;
+      //   });
+      //   res.json(modelInfo);
+      // }
       res.status(401).json({ message: "something went wrong" });
     }
   }
